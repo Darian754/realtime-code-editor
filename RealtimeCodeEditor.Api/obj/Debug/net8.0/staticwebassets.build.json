@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "8Ahj5MYjIggCttBSWwJwQaDhKTbQ4PWDFO4syhwvJAg=",
+  "Source": "RealtimeCodeEditor.Api",
+  "BasePath": "_content/RealtimeCodeEditor.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
