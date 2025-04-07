@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RealtimeCodeEditor.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+297ca107f823076dbe3d5c5d6e9c054ef337bf77")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5b7a0958843159ac9302bc0103ab5aad62fe2db")]
 [assembly: System.Reflection.AssemblyProductAttribute("RealtimeCodeEditor.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RealtimeCodeEditor.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

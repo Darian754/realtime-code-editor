@@ -1,37 +1,64 @@
 import { useEffect, useState } from 'react';
-import { HttpTransportType, HubConnectionBuilder} from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, HttpTransportType, LogLevel } from '@microsoft/signalr';
+import Editor from '@monaco-editor/react';
 
 export default function App() {
-  const [code, setCode] = useState("");
-  const [connection, setConnection] = useState<null | any>(null);
+  const [code, setCode] = useState<string>("// Start coding here...");
+  const [connection, setConnection] = useState<HubConnection | null>(null);
 
+  // SignalR connection setup
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
-  .withUrl("http://localhost:5298/codehub", {
-    skipNegotiation: true,  // Add this line
-    transport: HttpTransportType.WebSockets // Add this line
-  })
-  .build();
+      .withUrl("http://localhost:5298/codehub", {
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets
+      })
+      .configureLogging(LogLevel.Information)
+      .build();
 
     newConnection.start()
-      .then(() => newConnection.invoke("JoinRoom", "default-room"))
-      .catch(console.error);
+      .then(() => {
+        newConnection.invoke("JoinRoom", "default-room")
+          .catch((err: Error) => console.error('JoinRoom failed: ', err));
+        console.log("SignalR Connected");
+      })
+      .catch((err: Error) => console.error('Connection failed: ', err));
+
+    newConnection.on("ReceiveCodeUpdate", (newCode: string) => {
+      setCode(newCode);
+    });
 
     setConnection(newConnection);
-    return () => { newConnection.stop(); };
+
+    return () => {
+      newConnection.off("ReceiveCodeUpdate");
+      newConnection.stop()
+        .catch((err: Error) => console.error('Disconnection failed: ', err));
+    };
   }, []);
 
-  useEffect(() => {
-    connection?.on("ReceiveCodeUpdate", setCode);
-  }, [connection]);
+  const handleEditorChange = (value: string | undefined) => {
+    if (value !== undefined && connection) {
+      setCode(value);
+      connection.invoke("SendCodeUpdate", "default-room", value)
+        .catch((err: Error) => console.error('Send failed: ', err));
+    }
+  };
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Real-Time Editor</h1>
-      <textarea
+      <h1>Real-Time Code Editor</h1>
+      <Editor
+        height="80vh"
+        defaultLanguage="javascript"
+        theme="vs-dark"
         value={code}
-        onChange={(e) => connection?.invoke("SendCodeUpdate", "default-room", e.target.value)}
-        style={{ width: '100%', height: '500px', fontFamily: 'monospace' }}
+        onChange={handleEditorChange}
+        options={{
+          minimap: { enabled: false },
+          fontSize: 14,
+          wordWrap: "on"
+        }}
       />
     </div>
   );
